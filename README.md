@@ -33,5 +33,68 @@ look into utils.js file
 
 
  ## HTTP Module & Create Server
-> In `server.js`
+In `server.js`
+\
+\
+\
+Sets up an HTTP server in Node.js that serves HTML files based on URL paths, handles different HTTP methods and errors, and uses environment variables for configuration.
+```
+import http from 'http';
+import fs from 'fs/promises';
+import url from 'url';
+import path from 'path';
+import dotenv from 'dotenv';
 
+// get current path
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config();
+
+const PORT = process.env.PORT || 3000;
+
+const server = http.createServer(async (req, res) => {
+    try {
+        // Check if request is GET
+        if (req.method === 'GET') {
+            let filepath;
+            if (req.url === '/') {
+                filepath = path.join(__dirname, 'public', 'index.html');
+            } else if (req.url === '/about') {
+                filepath = path.join(__dirname, 'public', 'about.html');
+            } else {
+                res.writeHead(404, {'Content-Type': 'text/html'});
+                res.end('<h1>404 Not Found</h1>');
+                return;
+            }
+
+            const data = await fs.readFile(filepath);
+            res.setHeader('Content-Type', 'text/html');
+            res.writeHead(200);
+            res.end(data);
+        } else {
+            res.writeHead(405, {'Content-Type': 'text/html'});
+            res.end('<h1>405 Method Not Allowed</h1>');
+        }
+    } catch (error) {
+        res.writeHead(500, {'Content-Type': 'text/html'});
+        res.end('<h1>500 Server Error</h1>');
+    }
+});
+
+server.listen(PORT, () => {
+    console.log(`Server listening on ${PORT}`);
+});
+```
+
+
+## Building a API in Node.js
+In file `server2.js`
+
+
+## Middleware
+> logger Middleware part in `server2.js`
+
+
+## File System Module
+> In `fsDemo.js` file

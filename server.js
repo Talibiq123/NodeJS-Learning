@@ -1,11 +1,19 @@
-import http from 'http'
+import http from 'http';
+import fs from 'fs/promises';
+import url from 'url';
+import path from 'path';
 import dotenv from 'dotenv';
+
+// get current path
+const __filename = url.fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
 
 dotenv.config();
 
 const PORT = process.env.PORT || 3000;
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
     // res.write('Hello, World!');
     // res.end();
 
@@ -21,16 +29,19 @@ const server = http.createServer((req, res) => {
     try {
         // Check if request is GET
         if (req.method === 'GET') {
+            let filepath;
             if (req.url === '/') {
-                res.writeHead(200, {'Content-Type': 'text/html'})
-                res.end('<h1>Hello, World!</h1>');
+                filepath = path.join(__dirname, 'public', 'index.html');
         } else if (req.url === '/about') {
-            res.writeHead(200, {'Content-Type': 'text/html'})
-            res.end('<h1>About websites</h1>');
+            filepath = path.join(__dirname, 'public', 'about.html');
         } else {
-            res.writeHead(404, {'Content-Type': 'text/html'})
-            res.end('<h1>Not Found!</h1>');
+            throw new Error('Not Found');
         }
+
+        const data = await fs.readFile(filepath);
+        res.setHeader('Content-Type', 'text/html');
+        res.write(data);
+        res.end();
         } else {
             throw new Error('Method not found');
         }
