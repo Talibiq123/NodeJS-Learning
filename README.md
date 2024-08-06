@@ -98,3 +98,7 @@ In file `server2.js`
 
 ## File System Module
 > In `fsDemo.js` file and `test.txt` file
+
+
+## Path Module
+> In `pathDemo.js` file
